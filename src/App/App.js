@@ -8,12 +8,14 @@ import NotePageMain from '../NotePageMain/NotePageMain';
 import dummyStore from '../dummy-store';
 import {getNotesForFolder, findNote, findFolder} from '../notes-helpers';
 import './App.css';
+import UserContext from '../UserContext';
 
 class App extends Component {
     state = {
         notes: [],
         folders: []
     };
+    
 
     componentDidMount() {
         // fake date loading from API call
@@ -21,7 +23,7 @@ class App extends Component {
     }
 
     renderNavRoutes() {
-        const {notes, folders} = this.state;
+
         return (
             <>
                 {['/', '/folder/:folderId'].map(path => (
@@ -30,25 +32,31 @@ class App extends Component {
                         key={path}
                         path={path}
                         render={routeProps => (
-                            <NoteListNav
-                                folders={folders}
-                                notes={notes}
-                                {...routeProps}
-                            />
+                            <UserContext.Provider value={{
+                                folders: this.state.folders,
+                                notes: this.state.notes
+                            }}>
+                                <NoteListNav {...routeProps} />
+                            </UserContext.Provider>                            
                         )}
                     />
                 ))}
                 <Route
                     path="/note/:noteId"
                     render={routeProps => {
-                        const {noteId} = routeProps.match.params;
-                        const note = findNote(notes, noteId) || {};
-                        const folder = findFolder(folders, note.folderId);
-                        return <NotePageNav {...routeProps} folder={folder} />;
+                        
+                        return (
+                            <UserContext.Provider value={{
+                                folders: this.state.folders,
+                                notes: this.state.notes
+                            }}>
+                                <NotePageNav {...routeProps}  />
+                            </UserContext.Provider>                        
+                        );
                     }}
                 />
-                <Route path="/add-folder" component={NotePageNav} />
-                <Route path="/add-note" component={NotePageNav} />
+                {/* <Route path="/add-folder" component={NotePageNav} />
+                <Route path="/add-note" component={NotePageNav} /> */}
             </>
         );
     }
