@@ -71,16 +71,12 @@ class App extends Component {
                         key={path}
                         path={path}
                         render={routeProps => {
-                            const {folderId} = routeProps.match.params;
-                            const notesForFolder = getNotesForFolder(
-                                notes,
-                                folderId
-                            );
                             return (
-                                <NoteListMain
-                                    {...routeProps}
-                                    notes={notesForFolder}
-                                />
+                                <UserContext.Provider value = {this.state} >
+                                    <NoteListMain
+                                        {...routeProps}
+                                    />
+                                </UserContext.Provider>
                             );
                         }}
                     />
@@ -88,9 +84,14 @@ class App extends Component {
                 <Route
                     path="/note/:noteId"
                     render={routeProps => {
-                        const {noteId} = routeProps.match.params;
-                        const note = findNote(notes, noteId);
-                        return <NotePageMain {...routeProps} note={note} />;
+                        return (
+                        <UserContext.Provider value = {{
+                            folders: this.state.folders,
+                            notes: this.state.notes
+                        }}>
+                            <NotePageMain {...routeProps}/>
+                        </UserContext.Provider>
+                        );
                     }}
                 />
             </>
