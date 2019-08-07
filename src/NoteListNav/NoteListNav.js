@@ -7,10 +7,6 @@ import './NoteListNav.css'
 import UserContext from '../UserContext'
 
 class NoteListNav extends React.Component {
-  constructor(props) {
-    super(props)
-  }
-
   static contextType=UserContext;
 
   render () {

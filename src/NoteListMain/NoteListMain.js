@@ -4,14 +4,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Note from '../Note/Note'
 import CircleButton from '../CircleButton/CircleButton'
 import './NoteListMain.css'
-import {getNotesForFolder, findNote, findFolder} from '../notes-helpers';
+import {getNotesForFolder} from '../notes-helpers';
 import UserContext from '../UserContext';
 
 class NoteListMain extends React.Component {
   static contextType = UserContext;
 
   render(){
-    const {folders, notes} = this.context;
+    const {notes} = this.context;
     const {folderId} = this.props.match.params;
     const notesForFolder = getNotesForFolder(
         notes,
@@ -22,7 +22,7 @@ class NoteListMain extends React.Component {
         <ul>
           {notesForFolder.map(note =>
             <li key={note.id}>
-              <Note
+              <Note {...this.props}
                 id={note.id}
                 name={note.name}
                 modified={note.modified}

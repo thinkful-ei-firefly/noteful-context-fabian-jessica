@@ -5,8 +5,6 @@ import NoteListNav from '../NoteListNav/NoteListNav';
 import NotePageNav from '../NotePageNav/NotePageNav';
 import NoteListMain from '../NoteListMain/NoteListMain';
 import NotePageMain from '../NotePageMain/NotePageMain';
-import dummyStore from '../dummy-store';
-import {getNotesForFolder, findNote, findFolder} from '../notes-helpers';
 import './App.css';
 import UserContext from '../UserContext';
 
@@ -18,12 +16,38 @@ class App extends Component {
     
 
     componentDidMount() {
-        // fake date loading from API call
-        setTimeout(() => this.setState(dummyStore), 600);
+        fetch('http://localhost:9090/folders')
+            .then(res => res.json())
+            .then(folders => this.setState({folders: folders}));
+        fetch('http://localhost:9090/notes')
+            .then(res => res.json())
+            .then(notes => this.setState({notes: notes}));
+    }
+
+    handleDeleteClick = (id) => {
+        fetch('http://localhost:9090/notes/' + id, {
+            method: 'DELETE',
+            headers: {
+                'content-type': 'application/json'
+            },
+        })
+        .then(res => res.ok ? this.setState({notes: this.state.notes.filter(note => note.id!== id)}) : Promise.reject("You got error"))
+        .catch(error => console.log(error));
+
+    }
+
+    handleDeleteRedirectClick = (id) => {
+        fetch('http://localhost:9090/notes/' + id, {
+            method: 'DELETE',
+            headers: {
+                'content-type': 'application/json'
+            },
+        })
+        .then(res => res.ok ? this.setState({notes: this.state.notes.filter(note => note.id!== id)}) : Promise.reject("You got error"))
+        .catch(error => console.log(error));
     }
 
     renderNavRoutes() {
-
         return (
             <>
                 {['/', '/folder/:folderId'].map(path => (
@@ -62,7 +86,6 @@ class App extends Component {
     }
 
     renderMainRoutes() {
-        const {notes, folders} = this.state;
         return (
             <>
                 {['/', '/folder/:folderId'].map(path => (
@@ -72,7 +95,11 @@ class App extends Component {
                         path={path}
                         render={routeProps => {
                             return (
-                                <UserContext.Provider value = {this.state} >
+                                <UserContext.Provider value = {{
+                                    folders: this.state.folders,
+                                    notes: this.state.notes,
+                                    handleDeleteClick: this.handleDeleteClick
+                                }} >
                                     <NoteListMain
                                         {...routeProps}
                                     />
@@ -87,7 +114,8 @@ class App extends Component {
                         return (
                         <UserContext.Provider value = {{
                             folders: this.state.folders,
-                            notes: this.state.notes
+                            notes: this.state.notes,
+                            handleDeleteClick: this.handleDeleteRedirectClick
                         }}>
                             <NotePageMain {...routeProps}/>
                         </UserContext.Provider>

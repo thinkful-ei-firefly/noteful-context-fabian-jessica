@@ -1,18 +1,11 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import CircleButton from '../CircleButton/CircleButton'
-import {getNotesForFolder, findNote, findFolder} from '../notes-helpers';
+import {findNote, findFolder} from '../notes-helpers';
 import './NotePageNav.css'
 import UserContext from '../UserContext';
 
 class NotePageNav extends React.Component {
-  constructor(props) {
-    super(props)
-    
-
-    
-    
-  }
   static contextType = UserContext;
   
   
