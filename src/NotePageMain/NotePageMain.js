@@ -8,15 +8,11 @@ class NotePageMain extends React.Component {
   static contextType = UserContext;
 
   render(){
-    console.log(this.context);
     const {folders, notes} = this.context;
-    console.log(this.props.match);
     const {noteId} = this.props.match.params;
-    console.log(noteId);
     const note = findNote(notes, noteId);
-    console.log(note);
 
-    return (
+    return (note ? 
       <section className='NotePageMain'>
         <Note
           id={note.id}
@@ -28,7 +24,7 @@ class NotePageMain extends React.Component {
             <p key={i}>{para}</p>
           )}
         </div>
-      </section>
+      </section> : <div>Loading..</div>
     )
   }
   
