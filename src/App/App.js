@@ -11,7 +11,8 @@ import UserContext from '../UserContext';
 class App extends Component {
     state = {
         notes: [],
-        folders: []
+        folders: [],
+        handleDeleteClick: this.handleDeleteClick
     };
     
 
@@ -35,17 +36,7 @@ class App extends Component {
         .catch(error => console.log(error));
 
     }
-
-    handleDeleteRedirectClick = (id) => {
-        fetch('http://localhost:9090/notes/' + id, {
-            method: 'DELETE',
-            headers: {
-                'content-type': 'application/json'
-            },
-        })
-        .then(res => res.ok ? this.setState({notes: this.state.notes.filter(note => note.id!== id)}) : Promise.reject("You got error"))
-        .catch(error => console.log(error));
-    }
+    
 
     renderNavRoutes() {
         return (
@@ -56,10 +47,7 @@ class App extends Component {
                         key={path}
                         path={path}
                         render={routeProps => (
-                            <UserContext.Provider value={{
-                                folders: this.state.folders,
-                                notes: this.state.notes
-                            }}>
+                            <UserContext.Provider value={this.state}>
                                 <NoteListNav {...routeProps} />
                             </UserContext.Provider>                            
                         )}
@@ -70,10 +58,7 @@ class App extends Component {
                     render={routeProps => {
                         
                         return (
-                            <UserContext.Provider value={{
-                                folders: this.state.folders,
-                                notes: this.state.notes
-                            }}>
+                            <UserContext.Provider value={this.state}>
                                 <NotePageNav {...routeProps}  />
                             </UserContext.Provider>                        
                         );
@@ -95,11 +80,7 @@ class App extends Component {
                         path={path}
                         render={routeProps => {
                             return (
-                                <UserContext.Provider value = {{
-                                    folders: this.state.folders,
-                                    notes: this.state.notes,
-                                    handleDeleteClick: this.handleDeleteClick
-                                }} >
+                                <UserContext.Provider value = {this.state} >
                                     <NoteListMain
                                         {...routeProps}
                                     />
@@ -112,11 +93,7 @@ class App extends Component {
                     path="/note/:noteId"
                     render={routeProps => {
                         return (
-                        <UserContext.Provider value = {{
-                            folders: this.state.folders,
-                            notes: this.state.notes,
-                            handleDeleteClick: this.handleDeleteRedirectClick
-                        }}>
+                        <UserContext.Provider value = {this.state}>
                             <NotePageMain {...routeProps}/>
                         </UserContext.Provider>
                         );
